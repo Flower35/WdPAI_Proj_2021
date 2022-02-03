@@ -1,0 +1,22 @@
+
+body {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  font-family: 'Verdana';
+  font-size: 24 px;
+}
+
+#witryna {
+  width: 800px;
+  margin: 0 auto;
+  display: block;
+  border: 1px solid #fff;
+  background-color: #202020;
+}
+
+#witryna img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

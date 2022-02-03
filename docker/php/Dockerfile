@@ -1,6 +1,3 @@
-FROM php:7.4.3-fpm-alpine3.11
+FROM php:8-fpm-alpine
 
-# Copy the application code
-COPY . /app
-
-VOLUME ["/app"]
+WORKDIR /webapp/
