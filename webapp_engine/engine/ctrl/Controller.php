@@ -1,6 +1,6 @@
 <?php
 
-  class AppController {
+  class Controller {
 
     private $request;
 
@@ -9,11 +9,11 @@
     }
 
     protected function isGet(): bool {
-      return $this->request === 'GET';
+      return 'GET' === $this->request;
     }
 
     protected function isPost(): bool {
-      return $this->request === 'POST';
+      return 'POST' === $this->request;
     }
 
     protected function render(string $template = null, array $variables = []) {
