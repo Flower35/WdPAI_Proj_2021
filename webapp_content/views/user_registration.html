@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catalog :: Strona rejestracji</title>
+  <link rel="stylesheet" type="text/css" href="../styling/default.css" />
+  <link rel="icon" type="image/png" href="../images/cat.png" />
+</head>
+<body>
+  <div class="catsite-wrapper">
+    <div class="catsite-header">
+      <div class="catsite-header-col">
+        <img class="catsite-header-logo" src="../images/catalog.png" />
+      </div>
+      <div class="catsite-header-col">
+        <p>Create your account!</p>
+      </div>
+      <div class="catsite-header-col">
+        <div class="catsite-header-btns">
+          <img class="catsite-header-icon" src="../images/language.png" />
+        </div>
+      </div>
+    </div>
+    <div class="catsite-logon-row catsite-background-night">
+      <div class="catsite-logon-col catsite-logon-imgcol">
+        <img src="../images/rdj-waits.png" />
+      </div>
+      <div class="catsite-logon-col">
+        <br />
+        <div class="catsite-logon-messages">
+          <span>Amongus!</span>
+        </div>
+        <br />
+        <form action="onRegister" method="POST">
+          <input name="email" required type="text" placeholder="adres e-mail">
+          <input name="password1" required type="password" placeholder="password">
+          <input name="password2" required type="password" placeholder="confirm password">
+          <button type="submit">Registeruj</button>
+        </form>
+        <br />
+      </div>
+    </div>
+    <div class="catsite-footer">
+      <p>Stopka</p>
+    </div>
+  </div>
+</body>
+</html>
