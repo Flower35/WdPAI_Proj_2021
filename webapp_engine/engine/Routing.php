@@ -1,26 +1,36 @@
 <?php
 
   require_once 'ctrl/DefaultController.php';
+  require_once 'ctrl/AuthController.php';
+  require_once 'ctrl/UserController.php';
 
   class Router {
 
     public static $routes;
 
-    public static function get($url, $view) {
-      self::$routes[$url] = $view;
+    private static function add_route($url, $ctrl) {
+      self::$routes[$url] = $ctrl;
+    }
+
+    public static function post($url, $ctrl) {
+      self::add_route($url, $ctrl);
+    }
+
+    public static function get($url, $ctrl) {
+      self::add_route($url, $ctrl);
     }
 
     public static function run($url) {
       $action = explode("/", $url)[0];
       if (!array_key_exists($action, self::$routes)) {
-        die("Wrong url!");
+        die("<div><b>Routing:</b> Wrong url!</div>");
       }
 
-      $controller = self::$routes[$action];
-      $object = new $controller;
-      $action = $action ?: 'index';
+      $ctrlClass    = self::$routes[$action] . 'Controller';
+      $ctrlInstance = new $ctrlClass;
+      $action       = $action ?: 'index';
 
-      $object->$action();
+      $ctrlInstance->$action();
     }
 
   }

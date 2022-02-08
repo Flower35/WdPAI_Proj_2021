@@ -30,6 +30,10 @@
         print $output;
     }
 
+    public function databaseDied() {
+      $this->render('db_unreachable');
+    }
+
 }
 
 ?>

@@ -3,32 +3,39 @@
   require_once 'Controller.php';
 
   require_once __DIR__ . '/../mdl/User.php';
+  require_once __DIR__ . '/../repo/UserRepository.php';
 
   class AuthController extends Controller {
 
     const LOGON_VIEW = 'user_login';
+    const REGISTER_VIEW = 'user_registration';
+
+    private UserRepository $repository;
+
+    public function __construct() {
+      parent::__construct();
+      $this->repository = new UserRepository();
+    }
 
     public function onLogin() {
       if (!$this->isPost()) {
         return $this->render(self::LOGON_VIEW);
       }
 
-      $testUser = new User (
-        true, null, 'admin@poczta.pl', '123', null, null, null
-      );
-
       $email = $_POST['email'];
-      $pass  = $_POST['password'];
+      $pass  = hash('sha256', $_POST['password']);
 
-      if ($email != $testUser->getEmail()) {
+      $user = $this->repository->getUser($email);
+
+      if (!$user) {
         return $this->render(self::LOGON_VIEW, ['messages' => [
-          'User with this e-mail does not exist.'
+          'User "' . $email . '" not found!'
         ]]);
       }
 
-      if ($pass != $testUser->getPassword()) {
+      if ($pass != $user->getPassword()) {
         return $this->render(self::LOGON_VIEW, ['messages' => [
-          'Incorrect password for "' . $testUser->getEmail() . '".'
+          'Incorrect password for "' . $email . '".'
         ]]);
       }
 
@@ -37,8 +44,47 @@
     }
 
     public function onRegister() {
-      echo '<h3>Registering...</h3>';
-      // (...)
+      if (!$this->isPost()) {
+        return $this->render(self::REGISTER_VIEW);
+      }
+
+      $email = $_POST['email'];
+      $pass1 = $_POST['password1'];
+      $pass2 = $_POST['password2'];
+
+      if (!$email) {
+        return $this->render(self::REGISTER_VIEW, ['messages' => [
+          'Please provide an e-mail address!'
+        ]]);
+      }
+
+      if ((!$pass1) || (!$pass2)) {
+        return $this->render(self::REGISTER_VIEW, ['messages' => [
+          'Please provide a password!'
+        ]]);
+      }
+
+      if ($pass1 != $pass2) {
+        return $this->render(self::REGISTER_VIEW, ['messages' => [
+          'Password mismatch! Try again.'
+        ]]);
+      }
+
+      if ($this->repository->findUser($email)) {
+        return $this->render(self::REGISTER_VIEW, ['messages' => [
+          'Sorry, user "' . $email . '" already exists!'
+        ]]);
+      }
+
+      if (!$this->repository->addUser($email, hash('sha256', $pass1))) {
+        return $this->render(self::REGISTER_VIEW, ['messages' => [
+          'Sorry, could not add user to the database!'
+        ]]);
+      }
+
+      return $this->render(self::LOGON_VIEW, ['messages' => [
+        'Successfully registered account! :)'
+      ]]);
     }
 
   }

@@ -1,16 +1,24 @@
 <?php
 
-  require_once 'AppController.php';
+  require_once 'Controller.php';
 
-  class DefaultController extends AppController {
+  class DefaultController extends Controller {
 
-      public function index() {
-        $this->render('login');
-      }
+    public function index() {
+      $this->render('user_login');
+    }
 
-      public function register() {
-        $this->render('register');
-      }
+    public function home() {
+      $this->render('user_login');
+    }
+
+    public function registration() {
+      $this->render('user_registration');
+    }
+
+    public function browse() {
+      $this->render('browse_notes');
+    }
 
   }
 
