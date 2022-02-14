@@ -2,6 +2,7 @@ XD
 
 Users (
   user_id      SERIAL PRIMARY KEY NOT NULL,
+  superpowers  BOOL               NOT NULL,
   activated    BOOL               NOT NULL,
   created      TIMESTAMP          NOT NULL,
   email        VARCHAR(255)       NOT NULL UNIQUE,
@@ -19,7 +20,7 @@ Languages (
 
 Translation_Short (
   text_id    SERIAL PRIMARY KEY NOT NULL,
-  shortname  VARCHAR(16)        NOT NULL UNIQUE
+  shortname  VARCHAR(32)        NOT NULL UNIQUE
 );
 
 Translation_Text (

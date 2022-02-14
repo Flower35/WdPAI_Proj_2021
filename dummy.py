@@ -11,6 +11,8 @@
 
 from configparser import ConfigParser
 import psycopg2
+from datetime import datetime
+import hashlib
 
 ################################################################
 
@@ -59,45 +61,51 @@ class DatabaseTest():
     ################################################################
 
     @staticmethod
+    def load_translation_data(filename = 'translations.inc'):
+        with open(filename, 'r', encoding = 'utf-8') as file:
+            text = file.read()
+            return [entry.split('\n') for entry in text.split('\n\n')]
+
+    ################################################################
+
+    @staticmethod
     def print_head(msg: str):
         x = '-' * 64
         print('', x, '- ' + msg, x, sep = '\n')
 
     ################################################################
 
+    def remove_translations(self):
+
+        self.print_head('Removing languages and translations')
+
+        print()
+        self.cmd = 'TRUNCATE TABLE Languages'
+        self.run_command()
+        self.conn.commit()
+
+        print()
+        self.cmd = 'TRUNCATE TABLE Translation_Short'
+        self.run_command()
+        self.conn.commit()
+
+        print()
+        self.cmd = 'TRUNCATE TABLE Translation_Text'
+        self.run_command()
+        self.conn.commit()
+
+        print()
+
+    ################################################################
+
     def add_translations(self):
 
-        langs = [
-            [None, 'pol', 'Polski'],
-            [None, 'eng', 'English']
-        ]
-
-        texts = [
-            ['LANGUAGE', [
-                'Język',
-                'Language'
-            ]],
-            ['TITLE_LOGIN', [
-                'Logowanie do serwisu',
-                'Login to website'
-            ]],
-            ['TITLE_REGISTER', [
-                'Rejestracja użytkownika',
-                'User registration'
-            ]],
-            ['TITLE_BROWSE', [
-                'Przeglądanie notatek',
-                'Browsing notes'
-            ]],
-            ['TITLE_SETTINGS', [
-                'Ustawienia użytkownika',
-                'User settings'
-            ]],
-            ['TITLE_NOTE', [
-                'Twoja notatka',
-                'Your note'
-            ]]
-        ]
+        translation_data = self.load_translation_data()
+        langs_data = translation_data.pop(0)
+        if 'LANGS' != langs_data.pop(0):
+            raise Exception('Translations data should begin with "LANGS"!')
+        langs = [([None] + lang.strip().split(' ')) for lang in langs_data]
+        texts = [[entry[0], [text.strip() for text in entry[1:]]] for entry in translation_data]
 
         self.print_head('Adding languages and translations')
 
@@ -117,24 +125,26 @@ class DatabaseTest():
         print()
 
         for text in texts:
-            print()
 
-            self.cmd = f"""
-            INSERT INTO Translation_Short(shortname)
-            VALUES ('{text[0]}')
-            RETURNING text_id
-            """
-            self.run_command()
-
-            t_id = self.cur.fetchone()[0]
-
-            for i, tra in enumerate(text[1]):
+            if text[0] and not text[0].isspace():
+                print()
 
                 self.cmd = f"""
-                INSERT INTO Translation_Text(text_id, lang_id, text)
-                VALUES ({t_id}, {langs[i][0]}, '{tra}')
+                INSERT INTO Translation_Short(shortname)
+                VALUES ('{text[0]}')
+                RETURNING text_id
                 """
                 self.run_command()
+
+                t_id = self.cur.fetchone()[0]
+
+                for i, tra in enumerate(text[1]):
+
+                    self.cmd = f"""
+                    INSERT INTO Translation_Text(text_id, lang_id, text)
+                    VALUES ({t_id}, {langs[i][0]}, '{tra}')
+                    """
+                    self.run_command()
 
         print()
 
@@ -165,12 +175,65 @@ class DatabaseTest():
 
     ################################################################
 
+    def create_superusers(self):
+
+        admin = [
+            'admin@catsite.net',
+            '123456'
+        ]
+
+        self.print_head('Adding superusers')
+
+        created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        login = admin[0]
+        haslo = hashlib.sha256(bytearray(admin[1], 'utf-8')).hexdigest()
+
+        self.cmd = f"""
+        INSERT INTO Users(superpowers, activated, created, email, password, display_name)
+        VALUES ('true', 'true', '{created_at}', '{login}', '{haslo}', '{login}')
+        """
+        self.run_command()
+        self.conn.commit()
+
+        print()
+
+    ################################################################
+
     def prepare_database(self):
 
         try:
+            x = input('Czy zresetowac tabele? [T/N]\n')
+            x = 't' == x.lower()
+
             self.connection_test()
-            self.create_tables()
+            if x:
+                self.create_tables()
+            else:
+                self.remove_translations()
+
             self.add_translations()
+            self.create_superusers()
+
+            self.print_head('Displaying users')
+
+            self.cmd = 'SELECT * FROM Users LIMIT 0'
+            self.run_command()
+
+            colnames = [desc[0] for desc in self.cur.description]
+            for col in colnames:
+                print(f'[ {col} ]', end = '')
+
+            print()
+
+            self.cmd = """
+            SELECT * FROM Users
+            """
+            self.run_command()
+
+            for row in self.cur.fetchall():
+                for col in row:
+                    print(f'[ {str(col)} ]', end = '')
+                print()
 
         except (Exception, psycopg2.DatabaseError) as error:
             self.print_head('Wystąpił Wyjątek:')
