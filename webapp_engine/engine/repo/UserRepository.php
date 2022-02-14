@@ -15,10 +15,6 @@
 
     public function getUser(string $email): ?User {
 
-      // debug
-      $lang = $this->db->getLangId('eng');
-      $text = $this->db->getTranslation($lang, 'TITLE_LOGIN');
-
       $db_user = $this->findUser($email);
 
       if (null == $db_user) {
@@ -26,6 +22,8 @@
       }
 
       $user = new User(); $user
+        ->setUserId($db_user['user_id'])
+        ->setSuperpowers($db_user['superpowers'])
         ->setActivated($db_user['activated'])
         ->setCreationTime(new DateTime($db_user['created']))
         ->setEmail($db_user['email'])

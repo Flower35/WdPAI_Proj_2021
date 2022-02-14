@@ -1,5 +1,4 @@
 <?php
-  $title1 = 'Rejestracja';
   $title2 = 'Create your account!';
   include 'header.php';
 ?>
@@ -21,6 +20,7 @@
           <input name="email" required type="text" placeholder="adres e-mail">
           <input name="password1" required type="password" placeholder="password">
           <input name="password2" required type="password" placeholder="confirm password">
+          <input name="human" type="checkbox" ><label for="human">Nie jestem robotem</label><br />
           <button type="submit">Registeruj</button>
         </form>
         <br />

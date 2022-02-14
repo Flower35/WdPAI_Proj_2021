@@ -1,5 +1,4 @@
 <?php
-  $title1 = 'Edycja notatki';
   $title2 = 'Edit your note.';
   $user_logged_in = true;
   include 'header.php';

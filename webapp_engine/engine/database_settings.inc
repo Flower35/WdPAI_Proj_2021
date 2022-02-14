@@ -1,9 +1,9 @@
 <?php
   return array (
-    "HOST"     => "",
-    "DBNAME"   => "",
-    "USERNAME" => "",
-    "PASSWORD" => "",
+    "HOST"     => ":)",
+    "DBNAME"   => ":)",
+    "USERNAME" => ":)",
+    "PASSWORD" => ":)",
     "PORT"     => "5432"
   )
 ?>

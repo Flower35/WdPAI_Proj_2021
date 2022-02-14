@@ -1,5 +1,4 @@
 <?php
-  $title1 = 'Database Unreachable';
   $title2 = 'Database Unreachable';
   include 'header.php';
 ?>

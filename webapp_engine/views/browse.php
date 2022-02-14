@@ -1,7 +1,6 @@
 <?php
-  $title1 = 'Przeglądanie notatekk';
   $title2 = 'Browse your notes.';
-  $user_logged_in = false;
+  $user_logged_in = true;
   include 'header.php';
 ?>
     <div class="catsite-browser-row catsite-background-coffee">

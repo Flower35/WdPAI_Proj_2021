@@ -1,28 +1,33 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <title>Strona logowania</title>
-  <link rel="stylesheet" type="text/css" href="styling/default.css" />
-</head>
-<body>
-  <div id="witryna">
-    <img src="images/reko.png" />
-    <div class="login-container">
-      <form class="login" action="login" method="POST">
-        <div class="messages">
-          <?php
-            if(isset($messages)) {
-              foreach($messages as $message) {
-                echo $message;
-              }
-            }
-          ?>
-        </div>
-        <input name="email" type="text" placeholder="email@email.com">
-        <input name="password" type="password" placeholder="password">
-        <button type="submit">LOGIN</button>
-      </form>
+<?php
+  $title2 = 'Welcome! Please log in.';
+  $user_logged_in = false;
+  include 'header.php';
+?>
+    <div class="catsite-logon-row catsite-background-coffee">
+      <div class="catsite-logon-col catsite-logon-imgcol">
+        <img src="../images/rdj-welcome.png" />
+      </div>
+      <div class="catsite-logon-col">
+        <?php if (isset($messages) && count($messages) > 0) {
+          echo '<br />';
+          echo '<div class="catsite-logon-messages">';
+          foreach ($messages as $message) {
+            echo '<span>' . $message . '</span>';
+          }
+          echo '</div>';
+        } ?>
+        <br />
+        <form action="onLogin" method="POST">
+          <input name="email" required type="text" placeholder="adres e-mail">
+          <input name="password" required type="password" placeholder="password">
+          <button type="submit">LOGIN</button>
+        </form>
+        <br />
+        <form action="registration" method="POST">
+          <span>Nie masz jeszcze konta?</span>
+          <button type="submit">Zarejestruj się</button>
+        </form>
+        <br />
+      </div>
     </div>
-  </div>
-</body>
-</html>
+<?php include 'footer.php'; ?>

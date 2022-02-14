@@ -1,19 +1,26 @@
 <?php
 
+  require_once __DIR__ . '/../routing_views_defs.php';
   require_once 'Controller.php';
 
   class UserController extends Controller {
 
     public function browsing() {
-      $this->render('browse_notes');
+      if ($this->validateSession()) {
+        $this->render(ControllerViews\BROWSING);
+      }
     }
 
     public function settings() {
-      $this->render('user_settings');
+      if ($this->validateSession()) {
+        $this->render(ControllerViews\SETTINGS);
+      }
     }
 
     public function note() {
-      $this->render('edit_notes');
+      if ($this->validateSession()) {
+        $this->render(ControllerViews\EDITING);
+      }
     }
 
   }

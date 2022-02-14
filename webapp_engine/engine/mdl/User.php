@@ -2,7 +2,9 @@
 
   class User {
 
+    private ?int      $userId;
     private bool      $activated;
+    private bool      $superpowers;
     private ?DateTime $created;
     private string    $email;
     private string    $password;
@@ -10,8 +12,10 @@
     private ?int      $lang;
     private ?int      $lastNote;
 
-    public function __construct ()  {
+    public function __construct () {
+      $this->userId      = null;
       $this->activated   = false;
+      $this->superpowers = false;
       $this->created     = new DateTime();
       $this->email       = '';
       $this->password    = '';
@@ -20,12 +24,30 @@
       $this->lastNote    = null;
     }
 
+    public function getUserId(): int {
+      return $this->userId;
+    }
+
+    public function setUserId(int $id): User {
+      $this->userId = $id;
+      return $this;
+    }
+
     public function getActivated(): bool {
       return $this->activated;
     }
 
     public function setActivated(bool $activated): User {
       $this->activated = $activated;
+      return $this;
+    }
+
+    public function getSuperpowers(): bool {
+      return $this->superpowers;
+    }
+
+    public function setSuperpowers(bool $superpowers): User {
+      $this->superpowers = $superpowers;
       return $this;
     }
 
@@ -70,12 +92,8 @@
     }
 
     public function setPreferredLanguage(mixed $lang): User {
-       if (null != $lang) {
-         $this->lang = $lang;
-       } else {
-         $this->lang = null;
-       }
-       return $this;
+      $this->lang = $lang;
+      return $this;
     }
 
     public function getLastNoteId(): int {
@@ -83,11 +101,7 @@
     }
 
     public function setLastNoteId(mixed $lastNote): User {
-      if (null != $lastNote) {
-        $this->lastNote = $lastNote;
-      } else {
-        $this->lastNode = null;
-      }
+      $this->lastNote = $lastNote;
       return $this;
     }
 

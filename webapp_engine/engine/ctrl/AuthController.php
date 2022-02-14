@@ -1,91 +1,159 @@
 <?php
 
+  require_once __DIR__ . '/../routing_views_defs.php';
   require_once 'Controller.php';
+
+  require_once __DIR__ . '/../SessionInfo.php';
 
   require_once __DIR__ . '/../mdl/User.php';
   require_once __DIR__ . '/../repo/UserRepository.php';
 
+  /**
+   * Kontroler autoryzacji użytkownika
+   */
   class AuthController extends Controller {
 
-    const LOGON_VIEW = 'user_login';
-    const REGISTER_VIEW = 'user_registration';
+    #region Zmienne
 
+    /**
+     * Repozytorium wyszukujące użytkowników
+     */
     private UserRepository $repository;
 
+    #endregion
+
+    #region Metody
+
+    /**
+     * Konstruktor kontrolera AuthController
+     */
     public function __construct() {
       parent::__construct();
       $this->repository = new UserRepository();
     }
 
+    /**
+     * Akcja: próba zalogowania się
+     */
     public function onLogin() {
-      if (!$this->isPost()) {
-        return $this->render(self::LOGON_VIEW);
+
+      if (!SessionInfo::isLoggedIn() || SessionInfo::hasExpired()) {
+
+        if (!$this->isPost()) {
+          // Próba uruchomienia akcji przez niepoprawne żądanie
+          return $this->render(ControllerViews\LOGGING_IN);
+        }
+
+        // Odczyt danych z formularza logowania
+        $email = filter_var($_POST['email'] ?? null, FILTER_VALIDATE_EMAIL);
+        $pass  = $_POST['password'] ?? null;
+
+        // Czy wpisano niepusty adres email
+        if (!self::isTextSet($email)) {
+          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+            $this->tra->getText('ERROR_REGISTER_EMAIL'));
+        }
+        // Czy wpisano niepuste hasło
+        if (!self::isTextSet($pass)) {
+          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+            $this->tra->getText('ERROR_REGISTER_PASS'));
+        }
+
+        // Wyszukiwanie użytkownika wraz z jego pełnymi danymi
+        $user = $this->repository->getUser($email);
+
+        if (!$user) {
+          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+            $this->tra->getFormattedText('ERROR_LOGIN_MAIL', array($email)));
+        }
+
+        // Porównanie zahashowanego hasła
+        $pass  = hash('sha256', $pass);
+
+        if ($pass != $user->getPassword()) {
+          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+            $this->tra->getFormattedText('ERROR_LOGIN_PASS', array($email)));
+        }
+
+        // Logowanie pomyślne, rozpocznij sesję użytkownika
+        SessionInfo::rememberUser($user->getUserId());
       }
 
-      $email = $_POST['email'];
-      $pass  = hash('sha256', $_POST['password']);
-
-      $user = $this->repository->getUser($email);
-
-      if (!$user) {
-        return $this->render(self::LOGON_VIEW, ['messages' => [
-          'User "' . $email . '" not found!'
-        ]]);
-      }
-
-      if ($pass != $user->getPassword()) {
-        return $this->render(self::LOGON_VIEW, ['messages' => [
-          'Incorrect password for "' . $email . '".'
-        ]]);
-      }
-
-      $url = "http://$_SERVER[HTTP_HOST]";
-      header("Location: {$url}/browsing");
+      self::enterDashboard();
     }
 
+    /**
+     * Akcja: próba zarejestrowania się
+     */
     public function onRegister() {
+
+      if (SessionInfo::isLoggedIn() && !SessionInfo::hasExpired()) {
+        return self::enterDashboard();
+      }
+
       if (!$this->isPost()) {
-        return $this->render(self::REGISTER_VIEW);
+        // Próba uruchomienia akcji przez niepoprawne żądanie
+        return $this->render(ControllerViews\REGISTRATION);
       }
 
-      $email = $_POST['email'];
-      $pass1 = $_POST['password1'];
-      $pass2 = $_POST['password2'];
+      // Odczyt danych
+      $email = filter_var($_POST['email'] ?? null, FILTER_VALIDATE_EMAIL);
+      $pass1 = $_POST['password1'] ?? null;
+      $pass2 = $_POST['password2'] ?? null;
+      $human = $_POST['human']     ?? null;
 
-      if (!$email) {
-        return $this->render(self::REGISTER_VIEW, ['messages' => [
-          'Please provide an e-mail address!'
-        ]]);
+      // Czy osoba rejestrująca się nie jest robotem
+      if (!self::isTextSet($human) || ('on' != $human)) {
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+          $this->tra->getText('ERROR_REGISTER_HUMAN'));
       }
 
-      if ((!$pass1) || (!$pass2)) {
-        return $this->render(self::REGISTER_VIEW, ['messages' => [
-          'Please provide a password!'
-        ]]);
+      // Czy wpisano niepusty adres email
+      if (!self::isTextSet($email)) {
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+          $this->tra->getText('ERROR_REGISTER_EMAIL'));
       }
 
-      if ($pass1 != $pass2) {
-        return $this->render(self::REGISTER_VIEW, ['messages' => [
-          'Password mismatch! Try again.'
-        ]]);
-      }
-
+      // Czy użytkownik o podanej nazwie już istnieje
       if ($this->repository->findUser($email)) {
-        return $this->render(self::REGISTER_VIEW, ['messages' => [
-          'Sorry, user "' . $email . '" already exists!'
-        ]]);
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        $this->tra->getFormattedText('ERROR_REGISTER_EXISTS', array($email)));
       }
 
+      // Czy wpisano niepuste hasła
+      if (!self::isTextSet($pass1) || !self::isTextSet($pass2)) {
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+          $this->tra->getText('ERROR_REGISTER_PASS'));
+      }
+
+      // Czy hasła podane podczas rejestracji pasują do siebie
+      if ($pass1 != $pass2) {
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+          $this->tra->getText('ERROR_REGISTER_PASSMISS'));
+      }
+
+      // Dodaj użytkownika do bazy danych
       if (!$this->repository->addUser($email, hash('sha256', $pass1))) {
-        return $this->render(self::REGISTER_VIEW, ['messages' => [
-          'Sorry, could not add user to the database!'
-        ]]);
+        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+          $this->tra->getText('ERROR_REGISTER_ANYTHING'));
       }
 
-      return $this->render(self::LOGON_VIEW, ['messages' => [
-        'Successfully registered account! :)'
-      ]]);
+      return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+        $this->tra->getText('SUCCESS_REGISTER'));
     }
+
+    /**
+     * Akcja: próba wylogowania się
+     */
+    public function logOff() {
+
+      SessionInfo::end();
+
+      return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+        $this->tra->getText('SUCCESS_LOGOFF'));
+    }
+
+    #endregion
 
   }
 
