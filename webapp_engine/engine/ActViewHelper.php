@@ -38,6 +38,16 @@
     public const ACT_SETTINGS = 'settings';
 
     /**
+     * Użytkownik zmodyfikował swoje konto.
+     */
+    public const ACT_TRY_UPDATE_USER = 'onUserUpdate';
+
+    /**
+     * Użytkownik wykasował się.
+     */
+    public const ACT_TRY_REMOVE_USER = 'onUserRemove';
+
+    /**
      * Ekran dashboard.
      */
     public const ACT_BROWSING = 'browsing';
@@ -111,6 +121,10 @@
         case self::ACT_TRY_LOG_OFF:
           return 'Auth';
         case self::ACT_SETTINGS:
+          return 'User';
+        case self::ACT_TRY_UPDATE_USER:
+          return 'User';
+        case self::ACT_TRY_REMOVE_USER:
           return 'User';
         case self::ACT_BROWSING:
           return 'User';

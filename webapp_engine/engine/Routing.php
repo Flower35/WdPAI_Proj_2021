@@ -41,6 +41,8 @@
       check(AVHelper::ACT_BROWSING);
       check(AVHelper::ACT_EDITING);
       check(AVHelper::ACT_CHANGE_LANG);
+      check(AVHelper::ACT_TRY_UPDATE_USER);
+      check(AVHelper::ACT_TRY_REMOVE_USER);
     }
 
     /**

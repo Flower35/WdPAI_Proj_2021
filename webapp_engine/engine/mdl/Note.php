@@ -2,6 +2,7 @@
 
   class Note {
 
+    private int       $id;
     private int       $iconColor;
     private int       $bkgColor;
     private int       $fntColor;
@@ -13,6 +14,7 @@
     private array $rows;
 
     public function __construct () {
+      $this->id        = 0;
       $this->iconColor = 0;
       $this->bkgColor  = 0;
       $this->fntColor  = 0;
@@ -22,6 +24,15 @@
       $this->name      = '';
 
       $this->rows = null; // array(array(''));
+    }
+
+    public function getId(): int {
+      return $this->id;
+    }
+
+    public function setId(int $id): Note {
+      $this->id = $id;
+      return $this;
     }
 
     public function getIconColor(): int {

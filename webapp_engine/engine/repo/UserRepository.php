@@ -98,6 +98,58 @@
       return (null != $test[0]['user_id']);
     }
 
+    /**
+     * Zmiana hasła na prośbę użytkownika
+     * @param  int $userId Identyfikator użytkownika
+     * @param  string $hashPass Nowe, zahashowane hasło
+     * @return bool Prawda jeśli modyfikacja powiedzie się
+     */
+    public function changePassword(int $userId, string $hashPass): bool {
+      $test = $this->db->runQuery(
+        "UPDATE Users
+        SET password = ?
+        WHERE user_id = ?",
+          [$hashPass, $userId]
+      );
+
+      if (!$test) { return false; }
+      return isset($test[0]);
+    }
+
+    /**
+     * Zmiana nazwy wyświetlanej na prośbę użytkownika
+     * @param  int $userId Identyfikator użytkownika
+     * @param  string $displayName Nowa nazwa wyświetlana
+     * @return bool Prawda jeśli modyfikacja powiedzie się
+     */
+    public function changeDisplayName(int $userId, string $displayName): bool {
+      $test = $this->db->runQuery(
+        "UPDATE Users
+        SET display_name = ?
+        WHERE user_id = ?",
+          [$displayName, $userId]
+      );
+
+      if (!$test) { return false; }
+      return isset($test[0]);
+    }
+
+    /**
+     * Usunięcie konta na prośbę użytkownika
+     * @param  int $userId Identyfikator użytkownika
+     * @return bool Prawda jeśli konto zostało zniszczone
+     */
+    public function removeUser(int $userId): bool {
+      $test = $this->db->runQuery(
+        "DELETE FROM Users
+        WHERE user_id = ?",
+          [$userId]
+      );
+
+      if (!$test) { return false; }
+      return isset($test[0]);
+    }
+
   }
 
 ?>

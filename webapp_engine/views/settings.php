@@ -1,6 +1,4 @@
 <?php
-  $title1 = 'User settings';
-  $title2 = 'Change your account settings.';
   include 'header.php';
 ?>
     <div class="catsite-logon-row catsite-background-night">
@@ -8,20 +6,24 @@
         <img src="../images/rdj-waits.png" />
       </div>
       <div class="catsite-logon-col">
-        <br />
-        <div class="catsite-logon-messages">
-          <span>Amongus!</span>
-        </div>
+        <?php if (isset($messages) && count($messages) > 0) {
+          echo '<br />';
+          echo '<div class="catsite-logon-messages">';
+          foreach ($messages as $message) {
+            echo '<span>' . $message . '</span>';
+          }
+          echo '</div>';
+        } ?>
         <br />
         <form action="onUserUpdate" method="POST">
           <span>Your avatar:</span>
-          <img src="../avatars/1.png"/>
+          <img src="images/user.png"/>
           <input name="avatar" required type="file" placeholder="twój awatar">
           <button type="submit">Aktualizuj</button>
         </form>
         <br />
         <form action="onUserUpdate" method="POST">
-          <input name="displayName" required type="text" placeholder="nazwa wyświetlana">
+          <input name="displayName" type="text" placeholder="nazwa wyświetlana">
           <input name="password1" type="password" placeholder="nowe password">
           <input name="password2" type="password" placeholder="confirm password">
           <button type="submit">Aktualizuj</button>

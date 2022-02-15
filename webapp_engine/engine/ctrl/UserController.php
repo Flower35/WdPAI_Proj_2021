@@ -85,6 +85,78 @@
       }
     }
 
+    /**
+     * Akcja: Użytkownik zmienił dane swoje
+     */
+    public function onUserUpdate() {
+      if ($this->validateSession()) {
+
+        if (!$this->isPost()) {
+          // Próba uruchomienia akcji przez niepoprawne żądanie
+          return $this->render(AVHelper::VIEW_SETTINGS);
+        }
+
+        $messages = array();
+        $userId = SessionInfo::getUserId();
+
+        // Odczyt danych
+        $name  = $_POST['displayName'] ?? null;
+        $pass1 = $_POST['password1'] ?? null;
+        $pass2 = $_POST['password2'] ?? null;
+
+        // Czy wpisano nową niepustą nazwę
+        if (self::isTextSet($name)) {
+          if ($this->userRepo->changeDisplayName($userId, $name)) {
+            array_push($messages, $this->tra->getFormattedText('UPDATE_USERNAME_SUCCESS', array($name)));
+          } else {
+            array_push($messages, $this->tra->getText('UPDATE_USERNAME_FAIL'));
+          }
+        }
+
+        // Czy wpisano niepuste hasła
+        if (self::isTextSet($pass1) && self::isTextSet($pass2)) {
+          if ($pass1 != $pass2) {
+            array_push($messages, $this->tra->getText('ERROR_REGISTER_PASSMISS'));
+          } else {
+            if ($this->userRepo->changePassword($userId, hash('sha256', $pass1))) {
+              array_push($messages, $this->tra->getText('UPDATE_USERPASS_SUCCESS'));
+            } else {
+              array_push($messages, $this->tra->getText('UPDATE_USERPASS_FAIL'));
+            }
+          }
+        }
+
+        $vars = $this->GetCurrentUserVars();
+        $this->render(AVHelper::VIEW_SETTINGS, ['messages' => $messages, 'user' => $vars]);
+      }
+    }
+
+    /**
+     * Akcja: Użytkownik usuwa się
+     */
+    public function onUserRemove() {
+      if ($this->validateSession()) {
+
+        if (!$this->isPost()) {
+          // Próba uruchomienia akcji przez niepoprawne żądanie
+          return $this->render(AVHelper::VIEW_SETTINGS);
+        }
+
+        $userId = SessionInfo::getUserId();
+
+        if ($this->userRepo->removeUser($userId)) {
+          SessionInfo::end();
+
+          return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
+            $this->tra->getText('SUCCESS_LOGOFF'));
+        } else {
+          $vars = $this->GetCurrentUserVars();
+          $messages = array($this->tra->getFormattedText('REMOVE_USER_FAIL', array($userId, $vars['mail'])));
+          $this->render(AVHelper::VIEW_SETTINGS, ['messages' => $messages, 'user' => $vars]);
+        }
+      }
+    }
+
     #endregion
 
   }
