@@ -9,10 +9,10 @@
 # `C:\Python37\python.exe -m pip install --upgrade pip`
 # `C:\Python37\python.exe -m pip install psycopg2`
 
+import sys, os, hashlib
 from configparser import ConfigParser
 import psycopg2
 from datetime import datetime
-import hashlib
 
 ################################################################
 
@@ -126,7 +126,7 @@ class DatabaseTest():
 
         for text in texts:
 
-            if text[0] and not text[0].isspace():
+            if (len(text) > 0) and (text[0]) and (not text[0].isspace()):
                 print()
 
                 self.cmd = f"""
@@ -139,14 +139,15 @@ class DatabaseTest():
                 t_id = self.cur.fetchone()[0]
 
                 for i, tra in enumerate(text[1]):
-
-                    self.cmd = f"""
-                    INSERT INTO Translation_Text(text_id, lang_id, text)
-                    VALUES ({t_id}, {langs[i][0]}, '{tra}')
-                    """
-                    self.run_command()
+                    if i < len(langs):
+                        self.cmd = f"""
+                        INSERT INTO Translation_Text(text_id, lang_id, text)
+                        VALUES ({t_id}, {langs[i][0]}, '{tra}')
+                        """
+                        self.run_command()
 
         print()
+        print('Doszło tutaj!')
 
         self.conn.commit()
 
@@ -237,6 +238,9 @@ class DatabaseTest():
 
         except (Exception, psycopg2.DatabaseError) as error:
             self.print_head('Wystąpił Wyjątek:')
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(f'{exc_type} "{fname}": {exc_tb.tb_lineno}')
             print(error)
 
     ################################################################

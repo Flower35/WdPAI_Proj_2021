@@ -70,4 +70,39 @@ SUCCESS_LOGOFF
   Wylogowano pomyślnie.
   Logged off successfully.
 
+FORM_MAIL
+  adres e-mail
+  e-mail address
+
+FORM_PASS
+  hasło
+  password
+
+FORM_PASS2
+  powtórz hasło
+  repeat password
+
+FORM_ROBOT
+  Nie jestem robotem
+  I am not a robot
+
+FORM_BTN_LOGIN
+  Zaloguj się
+  Log in
+
+FORM_BTN_REGISTER
+  Zarejestruj konto
+  Register account
+
+HOME_QUESTION
+  Nie masz jeszcze konta?
+  Don''t you have an account yet?
+
+NAVMENU_SETTINGS
+  Ustawienia
+  Settings
+
+NAVMENU_LOGOFF
+  Wyloguj się
+  Log off
 
