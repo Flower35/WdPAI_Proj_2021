@@ -7,7 +7,7 @@
   require_once __DIR__ . '/../mdl/User.php';
   require_once __DIR__ . '/../repo/UserRepository.php';
   require_once __DIR__ . '/../mdl/Note.php';
-  require_once __DIR__ . '/../repo/NoteRepository.php';
+  // require_once __DIR__ . '/../repo/NoteRepository.php';
 
   /**
    * Kontroler dostępu do ustawień i notatek
@@ -20,7 +20,7 @@
      * Repozytorium wyszukujące użytkowników
      */
     private UserRepository $userRepo;
-    private NoteRepository $noteRepo;
+    // private NoteRepository $noteRepo;
 
     #endregion
 
@@ -32,7 +32,7 @@
     public function __construct() {
       parent::__construct();
       $this->userRepo = new UserRepository();
-      $this->noteRepo = new NoteRepository();
+      // $this->noteRepo = new NoteRepository();
     }
 
     /**
@@ -59,7 +59,13 @@
       if ($this->validateSession()) {
         $vars = $this->GetCurrentUserVars();
 
-        $this->render(AVHelper::VIEW_BROWSING, ['user' => $vars]);
+        $notes = array();
+        $tempNote = new Note();
+        array_push($notes, $tempNote->setName('Pusta notatka'));
+        $tempNote = new Note();
+        array_push($notes, $tempNote->setName('Notatka #2'));
+
+        $this->render(AVHelper::VIEW_BROWSING, ['user' => $vars, 'notes' => $notes]);
       }
     }
 

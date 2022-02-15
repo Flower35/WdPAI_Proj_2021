@@ -161,10 +161,19 @@
             'btnRegister' => 'FORM_BTN_REGISTER'
           ];
         case self::VIEW_BROWSING:
-        case self::VIEW_SETTINGS:
           return [
             'navMenuSettings' => 'NAVMENU_SETTINGS',
             'navMenuLogoff' => 'NAVMENU_LOGOFF'
+          ];
+        case self::VIEW_SETTINGS:
+          return [
+            'navMenuSettings' => 'NAVMENU_SETTINGS',
+            'navMenuLogoff' => 'NAVMENU_LOGOFF',
+            'hintName' => 'FORM_NEWNAME',
+            'hintPass' => 'FORM_NEWPASS',
+            'hintPass2' => 'FORM_PASS2',
+            'btnUpdate' => 'FORM_BTN_UPDATE',
+            'btnRemove' => 'FORM_BTN_REMOVE'
           ];
         // (...)
       }

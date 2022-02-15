@@ -11,7 +11,7 @@
     private ?DateTime $expires;
     private string    $name;
 
-    private array $rows;
+    private ?array $rows;
 
     public function __construct () {
       $this->id        = 0;
