@@ -90,7 +90,7 @@
           code = ?",
           [$code]);
 
-      return $test ? $test['lang_id'] : 1;
+      return $test ? $test[0]['lang_id'] : 1;
     }
 
     /**
@@ -114,7 +114,7 @@
         LIMIT 1",
           [$this->langId, $shortname]);
 
-      return $test ? $test['text'] : ('&quot;' . $shortname . '&quot;');
+      return $test ? $test[0]['text'] : ('&quot;' . $shortname . '&quot;');
     }
 
     /**
@@ -141,6 +141,31 @@
         $format);
 
         return htmlspecialchars($format);
+    }
+
+    /**
+     * Funkcja mapująca klucze identyfikatorów translacji na teksty z bazy danych
+     * @param  array $vars Tablica zawierająca pewne klucze i przypisane
+     *  do nich identyfikatory tekstowe tłumaczeń
+     * @return array Zwraca z powrotem tablicę z argumentu po dokonaniu zmian
+     */
+    public function mapTranslations(array $vars): array {
+      foreach ($vars as $key => $value) {
+        $vars[$key] = htmlspecialchars($this->getText($value));
+      }
+      return $vars;
+    }
+
+    /**
+     * Wyszukuje dostępne języki
+     * @return array Lista języków (pary: kod i pełna nazwa)
+     */
+    public function getLangs(): array {
+      return $this->db->runQuery(
+        "SELECT
+          code, name
+        FROM
+          Languages");
     }
 
     #endregion

@@ -1,6 +1,4 @@
 <?php
-  $title2 = 'Welcome! Please log in.';
-  $user_logged_in = false;
   include 'header.php';
 ?>
     <div class="catsite-logon-row catsite-background-coffee">
@@ -18,14 +16,14 @@
         } ?>
         <br />
         <form action="onLogin" method="POST">
-          <input name="email" required type="text" placeholder="adres e-mail">
-          <input name="password" required type="password" placeholder="password">
-          <button type="submit">LOGIN</button>
+          <input name="email" required type="text" placeholder="<?=$hintMail?>">
+          <input name="password" required type="password" placeholder="<?=$hintPass?>">
+          <button type="submit"><?=$btnLogin?></button>
         </form>
         <br />
         <form action="registration" method="POST">
-          <span>Nie masz jeszcze konta?</span>
-          <button type="submit">Zarejestruj się</button>
+          <span><?=$homeQuestion?></span>
+          <button type="submit"><?=$btnRegister?></button>
         </form>
         <br />
       </div>

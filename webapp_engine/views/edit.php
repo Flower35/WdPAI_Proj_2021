@@ -1,6 +1,5 @@
 <?php
   $title2 = 'Edit your note.';
-  $user_logged_in = true;
   include 'header.php';
 ?>
     <div class="catsite-editor-row catsite-background-sus">

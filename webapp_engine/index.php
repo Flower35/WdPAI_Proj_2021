@@ -1,6 +1,5 @@
 <?php
 
-  require_once 'engine/routing_views_defs.php';
   require_once 'engine/Routing.php';
   require_once 'engine/dbms.php';
   require_once 'engine/ctrl/Controller.php';

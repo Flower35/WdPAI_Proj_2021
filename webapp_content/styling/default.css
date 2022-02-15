@@ -51,12 +51,44 @@ html, body,
 .catsite-header-btns {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+
+  box-sizing: border-box;
+  border-left: 2px solid #5b7f00;
+  border-right: 2px solid #5b7f00;
 }
 
 .catsite-header-icon {
   display: inline;
   margin: auto;
   max-height: 48px;
+
+  vertical-align: middle; /* wyśrodkuje tekst obok ikony */
+}
+
+.catsite-header-links {
+  display: none;
+  background-color: #404080;
+}
+
+.catsite-header-links a {
+  display: block;
+  text-decoration: none;
+  padding: 14px 16px;
+
+  color: white;
+  background-color: #404080;
+  background: linear-gradient(to bottom, #404080, #404040);
+
+  box-sizing: border-box;
+  border-top: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+
+.catsite-header-links a:hover {
+  color: black;
+  background-color: #c0c0ff;
+  background: linear-gradient(to bottom, #C0C0FF, #808080);
 }
 
 .catsite-footer {
@@ -103,8 +135,8 @@ body {
   font-family: 'Arial';
 }
 
-.catsite-header, .catsite-footer,
-.catsite-logon-col input, .catsite-logon-col button,
+.catsite-header, .catsite-header-links a, .catsite-footer,
+.catsite-logon-col input, .catsite-logon-col label, .catsite-logon-col button,
 .catsite-browser-nav, .catsite-browser-grid,
 .catsite-editor-head, .catsite-editor-table,
 .catsite-editor-table input {
@@ -172,6 +204,14 @@ body, .catsite-logon-col {
 /****************************************************************/
 /* Logon clickable buttons and input fields
 /****************************************************************/
+
+.catsite-logon-col input[type='checkbox'] {
+  width: 64px;
+  height: 64px;
+  margin-right: 16px;
+  display: inline;
+  vertical-align: middle; /* wyśrodkuje tekst obok kwadracika */
+}
 
 .catsite-logon-col button,
 .catsite-browser-nav button,

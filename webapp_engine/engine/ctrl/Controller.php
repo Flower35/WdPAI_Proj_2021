@@ -1,6 +1,6 @@
 <?php
 
-  require_once __DIR__ . '/../routing_views_defs.php';
+  require_once __DIR__ . '/../ActViewHelper.php';
 
   require_once __DIR__ . '/../Translations.php';
 
@@ -61,11 +61,19 @@
 
       if(file_exists($templatePath)) {
 
+        extract($variables);
+
+        // "$title" jest przypisane, jeśli nie było dostępu
+        // do bazy danych w momencie uruchomienia aplikacji.
         if (!isset($title1)) {
           $title1 = $this->tra->getText('TITLE_' . strtoupper($template));
-        }
 
-        extract($variables);
+          $available_langs = $this->tra->getLangs();
+
+          $additional_vars = AVHelper::getViewVars($template);
+          $additional_vars = $this->tra->mapTranslations($additional_vars);
+          extract($additional_vars);
+        }
 
         ob_start();
         include $templatePath;
@@ -79,7 +87,7 @@
      * Domyślna akcja
      */
     public function defaultAction() {
-      $this->render(ControllerViews\DATABASE_UNREACHABLE,
+      $this->render(AVHelper::VIEW_DATABASE_UNREACHABLE,
         ['title1' => 'Database unreachable']);
     }
 
@@ -99,7 +107,7 @@
 
           SessionInfo::end();
 
-          $this->renderWithMessage(ControllerViews\LOGGING_IN,
+          $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
             $this->tra->getText('SESSION_EXPIRED'));
 
           return false;
@@ -112,14 +120,14 @@
 
       } elseif ($prompt) {
 
-        $this->renderWithMessage(ControllerViews\LOGGING_IN,
+        $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
           $this->tra->getText('SESSION_REQUIRED'));
 
         return false;
 
       } else {
 
-        $this->render(ControllerViews\LOGGING_IN);
+        $this->render(AVHelper::VIEW_LOGGING_IN);
         return false;
       }
     }
@@ -131,7 +139,7 @@
      */
     protected static function enterDashboard(): void {
       $url = "http://$_SERVER[HTTP_HOST]";
-      header("Location: {$url}/" . RoutingActions\BROWSING);
+      header("Location: {$url}/" . AVHelper::ACT_BROWSING);
     }
 
     /**
@@ -157,13 +165,6 @@
         isset($text) &&
         ("" != trim($text))  &&
         (!empty($text) || (0 == trim($text)));
-    }
-
-    /**
-     * Akcja: Zmiana języka
-     */
-    public static function changeLang() {
-      // (...)
     }
 
     #endregion

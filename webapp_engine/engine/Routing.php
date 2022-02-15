@@ -1,6 +1,6 @@
 <?php
 
-  require_once 'routing_views_defs.php';
+  require_once 'ActViewHelper.php';
 
   require_once 'ctrl/DefaultController.php';
   require_once 'ctrl/AuthController.php';
@@ -19,7 +19,7 @@
      */
     private static function assertContollersAndActionsExist(): void {
       function check(string $action): void {
-        $ctrlClass = Router::findCtrl($action);
+        $ctrlClass = AVHelper::findCtrl($action);
         if (null == $ctrlClass) {
           die("<div>Action <b>&quot;$action&quot;</b> is not assigned to any controller!</div>");
         }
@@ -32,45 +32,15 @@
         }
       }
 
-      check(RoutingActions\LOGGING_IN);
-      check(RoutingActions\REGISTRATION);
-      check(RoutingActions\TRY_LOGIN_FORM);
-      check(RoutingActions\TRY_REGISTER_FORM);
-      check(RoutingActions\TRY_LOG_OFF);
-      check(RoutingActions\SETTINGS);
-      check(RoutingActions\BROWSING);
-      check(RoutingActions\EDITING);
-    }
-
-    /**
-     * Wybór ścieżki routingu
-     *
-     * @param   string $action Wywoływana akcja
-     * @return ?string Człon nazwy kontrolera odpowiadającego za akcję
-     */
-    public static function findCtrl(string $action): ?string {
-      switch ($action) {
-        case '':
-          return 'Default';
-        case RoutingActions\LOGGING_IN:
-          return 'Default';
-        case RoutingActions\REGISTRATION:
-          return 'Default';
-        case RoutingActions\TRY_LOGIN_FORM:
-          return 'Auth';
-        case RoutingActions\TRY_REGISTER_FORM:
-          return 'Auth';
-          case RoutingActions\TRY_LOG_OFF:
-          return 'Auth';
-        case RoutingActions\SETTINGS:
-          return 'User';
-        case RoutingActions\BROWSING:
-          return 'User';
-        case RoutingActions\EDITING:
-          return 'User';
-      }
-
-      return null;
+      check(AVHelper::ACT_LOGGING_IN);
+      check(AVHelper::ACT_REGISTRATION);
+      check(AVHelper::ACT_TRY_LOGIN_FORM);
+      check(AVHelper::ACT_TRY_REGISTER_FORM);
+      check(AVHelper::ACT_TRY_LOG_OFF);
+      check(AVHelper::ACT_SETTINGS);
+      check(AVHelper::ACT_BROWSING);
+      check(AVHelper::ACT_EDITING);
+      check(AVHelper::ACT_CHANGE_LANG);
     }
 
     /**
@@ -80,7 +50,7 @@
       self::assertContollersAndActionsExist();
 
       $action = explode("/", $url)[0];
-      $ctrlClass = self::findCtrl($action);
+      $ctrlClass = AVHelper::findCtrl($action);
       if (null == $ctrlClass) {
         die("<div><b>Routing:</b> Wrong url!</div>");
       }

@@ -1,6 +1,6 @@
 <?php
 
-  require_once __DIR__ . '/../routing_views_defs.php';
+  require_once __DIR__ . '/../ActViewHelper.php';
   require_once 'Controller.php';
 
   require_once __DIR__ . '/../SessionInfo.php';
@@ -41,7 +41,7 @@
 
         if (!$this->isPost()) {
           // Próba uruchomienia akcji przez niepoprawne żądanie
-          return $this->render(ControllerViews\LOGGING_IN);
+          return $this->render(AVHelper::VIEW_LOGGING_IN);
         }
 
         // Odczyt danych z formularza logowania
@@ -50,20 +50,20 @@
 
         // Czy wpisano niepusty adres email
         if (!self::isTextSet($email)) {
-          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+          return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
             $this->tra->getText('ERROR_REGISTER_EMAIL'));
         }
         // Czy wpisano niepuste hasło
         if (!self::isTextSet($pass)) {
-          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+          return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
             $this->tra->getText('ERROR_REGISTER_PASS'));
         }
 
         // Wyszukiwanie użytkownika wraz z jego pełnymi danymi
-        $user = $this->repository->getUser($email);
+        $user = $this->repository->getUserByMail($email);
 
         if (!$user) {
-          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+          return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
             $this->tra->getFormattedText('ERROR_LOGIN_MAIL', array($email)));
         }
 
@@ -71,7 +71,7 @@
         $pass  = hash('sha256', $pass);
 
         if ($pass != $user->getPassword()) {
-          return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+          return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
             $this->tra->getFormattedText('ERROR_LOGIN_PASS', array($email)));
         }
 
@@ -93,7 +93,7 @@
 
       if (!$this->isPost()) {
         // Próba uruchomienia akcji przez niepoprawne żądanie
-        return $this->render(ControllerViews\REGISTRATION);
+        return $this->render(AVHelper::VIEW_REGISTRATION);
       }
 
       // Odczyt danych
@@ -104,41 +104,41 @@
 
       // Czy osoba rejestrująca się nie jest robotem
       if (!self::isTextSet($human) || ('on' != $human)) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
           $this->tra->getText('ERROR_REGISTER_HUMAN'));
       }
 
       // Czy wpisano niepusty adres email
       if (!self::isTextSet($email)) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
           $this->tra->getText('ERROR_REGISTER_EMAIL'));
       }
 
       // Czy użytkownik o podanej nazwie już istnieje
-      if ($this->repository->findUser($email)) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+      if ($this->repository->findUserByMail($email)) {
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
         $this->tra->getFormattedText('ERROR_REGISTER_EXISTS', array($email)));
       }
 
       // Czy wpisano niepuste hasła
       if (!self::isTextSet($pass1) || !self::isTextSet($pass2)) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
           $this->tra->getText('ERROR_REGISTER_PASS'));
       }
 
       // Czy hasła podane podczas rejestracji pasują do siebie
       if ($pass1 != $pass2) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
           $this->tra->getText('ERROR_REGISTER_PASSMISS'));
       }
 
       // Dodaj użytkownika do bazy danych
       if (!$this->repository->addUser($email, hash('sha256', $pass1))) {
-        return $this->renderWithMessage(ControllerViews\REGISTRATION,
+        return $this->renderWithMessage(AVHelper::VIEW_REGISTRATION,
           $this->tra->getText('ERROR_REGISTER_ANYTHING'));
       }
 
-      return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+      return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
         $this->tra->getText('SUCCESS_REGISTER'));
     }
 
@@ -149,7 +149,7 @@
 
       SessionInfo::end();
 
-      return $this->renderWithMessage(ControllerViews\LOGGING_IN,
+      return $this->renderWithMessage(AVHelper::VIEW_LOGGING_IN,
         $this->tra->getText('SUCCESS_LOGOFF'));
     }
 

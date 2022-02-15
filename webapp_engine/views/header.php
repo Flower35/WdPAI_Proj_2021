@@ -6,24 +6,24 @@
   <title>Catalog :: <?=$title1?></title>
   <link rel="stylesheet" type="text/css" href="styling/default.css" />
   <link rel="icon" type="image/png" href="images/cat.png" />
+  <script type="text/javascript" src="scripting/default.js"></script>
 </head>
 <body>
   <div class="catsite-wrapper">
     <div class="catsite-header">
       <div class="catsite-header-col">
         <a href="home">
-          <img class="catsite-header-logo" src="../images/catalog.png" />
+          <img class="catsite-header-logo" src="images/catalog.png" />
         </a>
       </div>
       <div class="catsite-header-col">
-        <div class="catsite-header-btns">
-        <?php if (isset($user_logged_in) && $user_logged_in) {
-          echo '<img class="catsite-header-icon" src="../images/settings.png" />';
-          echo '<img class="catsite-header-icon" src="../images/logout.png" />';
-        } ?>
-        </div>
-        <div class="catsite-header-btns">
-          <img class="catsite-header-icon" src="../images/language.png" />
-        </div>
+        <?php
+          if (isset($user)) { include 'header_nav0a.php'; }
+          if (isset($available_langs)) { include 'header_nav1a.php'; }
+        ?>
       </div>
     </div>
+    <?php
+      if (isset($user)) { include 'header_nav0b.php'; }
+      if (isset($available_langs)) { include 'header_nav1b.php'; }
+    ?>

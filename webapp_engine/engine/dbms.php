@@ -122,7 +122,7 @@
       $stmt = $this->pdo->prepare($query);
       $stmt->execute($params);
 
-      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
       return (false == $result) ? null : $result;
     }
 

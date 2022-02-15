@@ -1,6 +1,5 @@
 <?php
   $title2 = 'Browse your notes.';
-  $user_logged_in = true;
   include 'header.php';
 ?>
     <div class="catsite-browser-row catsite-background-coffee">

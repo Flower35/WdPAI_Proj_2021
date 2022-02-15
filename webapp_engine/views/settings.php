@@ -1,7 +1,6 @@
 <?php
   $title1 = 'User settings';
   $title2 = 'Change your account settings.';
-  $user_logged_in = false;
   include 'header.php';
 ?>
     <div class="catsite-logon-row catsite-background-night">

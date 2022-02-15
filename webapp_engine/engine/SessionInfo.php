@@ -11,12 +11,19 @@
     private const TIMEOUT = 60 * 30;
 
     /**
+     * Czy wywołano już metodę magiczną 'session_start()'
+     */
+    private static bool $sessionStarted = false;
+
+    /**
      * Czy użytkownik jest obecnie zalogowany?
      * @return bool Prawda jeśli użytkownik jest zalogowany.
      */
     public static function isLoggedIn(): bool {
-      session_start();
-
+      if (!self::$sessionStarted) {
+        session_start();
+        self::$sessionStarted = true;
+      }
       return
         isset($_SESSION['theUser']) &&
         isset($_SESSION['created']);
@@ -47,10 +54,20 @@
      * @return void
      */
     public static function rememberUser(int $userId): void {
-      // isLoggedIn() => session_start();
-
+      if (!self::$sessionStarted) {
+        session_start();
+        self::$sessionStarted = true;
+      }
       $_SESSION['theUser'] = $userId;
       self::refreshTimeout();
+    }
+
+    /**
+     * Pobierz identyfikator obecnie zalogowanego użytkownika
+     * @return int Identyfikator użytkownika
+     */
+    public static function getUserId(): int {
+      return $_SESSION['theUser'];
     }
 
     /**
@@ -58,7 +75,10 @@
      * @return void
      */
     public static function end(): void {
-      session_start();
+      if (!self::$sessionStarted) {
+        session_start();
+        self::$sessionStarted = true;
+      }
       session_unset();
       session_destroy();
     }

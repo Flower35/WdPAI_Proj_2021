@@ -1,6 +1,6 @@
 <?php
 
-  require_once __DIR__ . '/../routing_views_defs.php';
+  require_once __DIR__ . '/../ActViewHelper.php';
   require_once 'Controller.php';
 
   require_once __DIR__ . '/../SessionInfo.php';
@@ -40,7 +40,19 @@
      * Akcja: Strona rejestracji
      */
     public function registration() {
-      $this->render(ControllerViews\REGISTRATION);
+      $this->render(AVHelper::VIEW_REGISTRATION);
+    }
+
+    /**
+     * Akcja: Zmiana języka (bez wyświetlania zawartości)
+     */
+    public function changeLang() {
+
+      if (!$this->isPost()) {
+        return self::enterDashboard();
+      }
+
+      $this->tra->setLang($_POST['code'] ?? '');
     }
 
   }
